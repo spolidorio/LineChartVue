@@ -1,0 +1,29 @@
+add-font(p_family, p_file-name, p_weight = normal, p_style = normal, p_path = '../assets/fonts/')
+	@font-face
+		font-family p_family
+		src url(p_path+p_file-name+'.woff2') format("woff2"),
+			url(p_path+p_file-name+'.woff') format('woff'),
+			url(p_path+p_file-name+'.ttf')  format('truetype')
+		font-weight p_weight
+		font-style p_style
+
+font-size-fix(p_size)
+	font-size p_size
+	-webkit-text-size-adjust p_size
+	-ms-text-size-adjust p_size
+
+font-alias-fix(p_weight)
+	text-shadow 0 -1px 1px rgba(255, 255, 255, 0.01)
+	text-rendering optimizeLegibility
+	-webkit-font-smoothing antialiased
+	-moz-osx-font-smoothing grayscale
+
+font(p_size = null, p_font = Helvetica, p_weight = 400, p_style = normal)
+	font-family p_font
+	font-style p_style
+	font-alias-fix(p_weight)
+	if p_size is not null
+		font-size-fix(p_size)
+		
+*
+	font-alias-fix(normal)

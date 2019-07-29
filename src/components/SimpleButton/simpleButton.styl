@@ -1,0 +1,31 @@
+@import "../../utils/stylus/responsive.styl"
+@import "../../utils/stylus/variables.styl"
+
+.simple-button
+    width: 94%;
+    height: 50px;
+    background-color: #0d1a7b;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 10px;
+    @media ds
+        width: 100%;
+        background-color: transparent;
+        border: 1px solid #FFF;
+        left: initial;
+        transform: initial;
+        bottom: 0;
+        cursor pointer
+        box-sizing: border-box;
+    .svg
+        width 30px
+        @media ds
+            width 20px
+        svg
+            fill: #FFF
+          
+    
