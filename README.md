@@ -1,4 +1,6 @@
-# base
+# Line Chart with VUE.js
+
+Project that imports data from json and show charts using SVG
 
 ## Project setup
 ```
