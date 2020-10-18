@@ -1,14 +1,45 @@
 <template>
-	<div id="app">
-		<template>
-			<SiteHeader ref="header"></SiteHeader>
-			<section class="nav-container" ref="navContainer">
-				<router-view/>
-			</section>
-			<SiteFooter ref="footer"></SiteFooter>
-		</template>
-	</div>
+  <div id="app">
+    <template>
+      <section class="nav-container">
+        <LineChart :all="data" :start="data[0]" />
+      </section>
+    </template>
+  </div>
 </template>
 
-<script src="./app/app.js"></script>
-<style src="./app/app.styl" lang="stylus"></style>
+
+
+<script>
+import LineChart from "./components/LineChart/LineChart.vue";
+import chart from "./assets/data/chart.json";
+
+export default {
+  name: "App",
+  components: {
+    LineChart,
+  },
+  data() {
+    return {
+      data: chart,
+    };
+  },
+};
+</script>
+
+
+<style lang="stylus">
+@import './stylus/reset.styl';
+@import './stylus/responsive.styl';
+@import './stylus/fonts.styl';
+@import './stylus/variables.styl';
+
+#app {
+  font-family: 'Avenir', Helvetica, Arial, sans-serif;
+  text-align: center;
+}
+
+.nav-container {
+  height: calc(100vh - 110px);
+}
+</style>
