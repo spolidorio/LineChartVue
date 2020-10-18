@@ -2,7 +2,6 @@
 	<div class="line-chart">
 		<svg xmlns="http://www.w3.org/2000/svg" :viewBox="`${size.x} ${size.y} ${size.w} ${size.h}`">
 			<polyline :points="xAxisLine" style="fill: none; stroke: rgb(0, 0, 0); stroke-width: 0.2" />
-
 			<polyline :points="yAxisLine" style="fill: none; stroke: #000; stroke-width: 0.2" />
 
 			<template v-for="(line, i) in data.data">
@@ -12,7 +11,7 @@
 			<g>
 				<template v-for="(label, k) in data.labels.y">
 					<g :key="k" id="labels-y">
-						<text :x="calcTextX()" :y="calcY(k, 0.5)" font-family="Verdana" font-size="2">
+						<text :x="padding" :y="calcY(k, 0.5)" font-family="Verdana" font-size="2">
 							{{ label }}
 						</text>
 						<template v-if="label != '0'">
@@ -43,7 +42,6 @@
 <script>
 export default {
 	name: 'LineChart',
-	components: {},
 	data() {
 		return {
 			points: [],
@@ -97,53 +95,43 @@ export default {
 	methods: {
 		creatLines(rawData) {
 			if (!this.range) return
-			const lines = []
 
-			//ponto incial
-			lines.push(
-				this.dataToPoint(
-					rawData.nome,
-					[rawData.dataPoints[0][0], this.range.y.min],
-					{
-						y: { max: this.range.y.min, min: this.range.y.max },
-						x: this.range.x,
-					},
-					this.padding
-				)
-			)
+			const { nome, dataPoints } = rawData
+			const { x, y } = this.range
+			const range = {
+				max: y.min,
+				min: y.max,
+			}
 
-			rawData.dataPoints.forEach((points) => {
-				lines.push(
-					this.dataToPoint(
-						rawData.nome,
-						points,
-						{
-							y: { max: this.range.y.min, min: this.range.y.max },
-							x: this.range.x,
-						},
-						this.padding
-					)
-				)
-			})
+			//initial point
 
-			//ponto final
-			lines.push(
-				this.dataToPoint(
-					rawData.nome,
-					[rawData.dataPoints[rawData.dataPoints.length - 1][0], this.range.y.min],
-					{
-						y: { max: this.range.y.min, min: this.range.y.max },
-						x: this.range.x,
-					},
-					this.padding
-				)
-			)
+			// lines.push(
+			// 	this.dataToPoint(
+			// 		rawData.nome,
+			// 		[rawData.dataPoints[0][0], this.range.y.min],
+			// 		{
+			// 			y: { max: this.range.y.min, min: this.range.y.max },
+			// 			x: this.range.x,
+			// 		},
+			// 		this.padding
+			// 	)
+			// )
 
-			return lines
-		},
+			//final point
 
-		calcTextX() {
-			return this.padding.left - 4
+			// lines.push(
+			// 	this.dataToPoint(
+			// 		rawData.nome,
+			// 		[rawData.dataPoints[rawData.dataPoints.length - 1][0], this.range.y.min],
+			// 		{
+			// 			y: { max: this.range.y.min, min: this.range.y.max },
+			// 			x: this.range.x,
+			// 		},
+			// 		this.padding
+			// 	)
+			// )
+
+			return dataPoints.map((points) => this.dataToPoint(nome, points, { y: range, x }, this.padding))
 		},
 
 		calcY(index, offset) {
@@ -154,25 +142,23 @@ export default {
 			return ((parseInt(this.size.w) - this.padding.left) * index) / (this.data.labels.x.length - 1) + this.padding.left
 		},
 
-		getColor(i) {
-			let colors = ['#d94628', '#4374df']
+		getColor(position) {
+			const colors = ['#d94628', '#4374df']
 			return {
-				stroke: colors[i],
+				stroke: colors[position],
 			}
 		},
 
-		dataToPoint(name, point, range, padding, change = 1) {
-			let sizeW = parseInt(this.size.w) - (padding.right + padding.left)
-			let sizeH = parseInt(this.size.h) - (padding.top + padding.bottom)
+		dataToPoint(name, point, range, padding) {
+			const { top, left, bottom, right } = padding
+			const { w, h } = this.size
+			const { x, y } = range
 
-			let xAxis = (sizeW / (range.x.max - range.x.min)) * (point[0] - range.x.min) + padding.left
-			let yAxis = null
+			const sizeW = parseInt(w) - (right + left)
+			const sizeH = parseInt(h) - (top + bottom)
 
-			if (change == 0) {
-				yAxis = sizeH
-			} else {
-				yAxis = (sizeH / (range.y.max - range.y.min)) * (point[1] - range.y.min) + padding.top / change
-			}
+			const xAxis = (sizeW / (x.max - x.min)) * (point[0] - x.min) + left
+			const yAxis = (sizeH / (y.max - y.min)) * (point[1] - y.min) + top
 
 			return [xAxis, yAxis]
 		},
