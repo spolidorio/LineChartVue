@@ -1,32 +1,29 @@
 <template>
-  <div id="app">
-    <template>
-      <section class="nav-container">
-        <LineChart :all="data" :start="data[0]" />
-      </section>
-    </template>
-  </div>
+	<div id="app">
+		<template>
+			<section class="nav-container">
+				<LineChart :all="data" :start="data[0]" />
+			</section>
+		</template>
+	</div>
 </template>
 
-
-
 <script>
-import LineChart from "./components/LineChart/LineChart.vue";
-import chart from "./assets/data/chart.json";
+import LineChart from './components/LineChart/LineChart.vue'
+import chart from './assets/data/chart.json'
 
 export default {
-  name: "App",
-  components: {
-    LineChart,
-  },
-  data() {
-    return {
-      data: chart,
-    };
-  },
-};
+	name: 'App',
+	components: {
+		LineChart,
+	},
+	data() {
+		return {
+			data: chart,
+		}
+	},
+}
 </script>
-
 
 <style lang="stylus">
 @import './stylus/reset.styl';
