@@ -1,40 +1,36 @@
 <template>
-	<div class="line-chart">
-		<svg xmlns="http://www.w3.org/2000/svg" :viewBox="`${size.x} ${size.y} ${size.w} ${size.h}`">
-			<polyline :points="xAxisLine" style="fill: none; stroke: rgb(0, 0, 0); stroke-width: 0.2" />
-			<polyline :points="yAxisLine" style="fill: none; stroke: #000; stroke-width: 0.2" />
-
-			<template v-for="(line, i) in data.data">
-				<polyline :points="creatLines(line)" style="fill: none; stroke-width: 0.3" fill="red" :style="getColor(i)" :key="i" />
-			</template>
-
+	<div class="LineChart">
+		<svg
+			class="LineChart__Svg LineChart__Svg--debug"
+			:viewBox="`${size.x} ${size.y} ${size.w} ${size.h}`"
+			xmlns="http://www.w3.org/2000/svg"
+		>
 			<g>
-				<template v-for="(label, k) in data.labels.y">
-					<g :key="k" id="labels-y">
-						<text :x="padding" :y="calcY(k, 0.5)" font-family="Verdana" font-size="2">
-							{{ label }}
-						</text>
-						<template v-if="label != '0'">
-							<circle :cx="padding.left" :cy="calcY(k, 0)" r=".6" />
-							<line
-								:x1="padding.left"
-								:y1="calcY(k, 0)"
-								x2="100"
-								:y2="calcY(k, 0)"
-								style="stroke: rgba(0, 0, 0, 0.2); stroke-width: 0.2"
-							/>
-						</template>
-					</g>
-				</template>
+				<g v-for="(label, k) in data.labels.y" :key="k" id="labels-y">
+					<text class="LineChart__Label" :x="padding.x" :y="calcY(k, 0)">
+						{{ label }}
+					</text>
+					<line class="LineChart__Guide" :x1="padding.left" :y1="calcY(k, 0)" x2="100" :y2="calcY(k, 0)" />
+					<circle v-if="label !== 0" :cx="padding.left" :cy="calcY(k, 0)" r=".6" />
+				</g>
 
-				<template v-for="(label, x) in data.labels.x">
-					<g :key="x + '-1'" id="labels-x">
-						<text :x="calcX(x)" y="100" font-family="Verdana" font-size="1">
-							{{ label }}
-						</text>
-					</g>
-				</template>
+				<g v-for="(label, x) in data.labels.x" :key="x + '-1'" id="labels-x">
+					<text class="LineChart__Label" :x="calcX(x)" y="100">
+						{{ label }}
+					</text>
+				</g>
 			</g>
+
+			<polyline class="LineChart__Axis" :points="xAxisLine" />
+			<polyline class="LineChart__Axis" :points="yAxisLine" />
+
+			<polyline
+				v-for="(line, i) in data.data"
+				class="LineChart__Content"
+				:key="i"
+				:points="creatLines(line)"
+				:style="getColor(i)"
+			/>
 		</svg>
 	</div>
 </template>
@@ -170,10 +166,35 @@ export default {
 @import '../../stylus/responsive.styl';
 @import '../../stylus/variables.styl';
 
-.line-chart {
-  svg {
-    overflow: visible;
-    width: 500px;
-  }
+.LineChart {
+	&__Svg{
+		overflow: visible;
+		width: 600px;
+		&--debug{
+			background-color: red;
+			position: relative;
+			top: 60px;
+		}
+	}
+
+	&__Axis{
+		fill: none;
+		stroke: #000;
+		stroke-width: 0.2
+	}
+
+	&__Content{
+		fill: none;
+		stroke-width: 0.3
+	}
+
+	&__Label{
+		font-size 2px
+	}
+
+	&__Guide{
+		stroke: #dedede;
+		stroke-width: 0.2
+	}
 }
 </style>

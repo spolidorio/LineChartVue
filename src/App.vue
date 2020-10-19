@@ -35,8 +35,4 @@ export default {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   text-align: center;
 }
-
-.nav-container {
-  height: calc(100vh - 110px);
-}
 </style>
