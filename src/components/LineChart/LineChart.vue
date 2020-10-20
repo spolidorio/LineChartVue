@@ -7,11 +7,11 @@
 		>
 			<g>
 				<g v-for="(label, k) in data.labels.y" :key="k" id="labels-y">
-					<text class="LineChart__Label" :x="padding.x" :y="calcY(k, 0)">
+					<text class="LineChart__Label" :x="padding.x" :y="calcY(k, 2)">
 						{{ label }}
 					</text>
-					<line class="LineChart__Guide" :x1="padding.left" :y1="calcY(k, 0)" x2="100" :y2="calcY(k, 0)" />
-					<circle v-if="label !== 0" :cx="padding.left" :cy="calcY(k, 0)" r=".6" />
+					<line class="LineChart__Guide" :x1="padding.left" :y1="calcY(k, 0.5)" x2="100" :y2="calcY(k, 0)" />
+					<circle v-if="label !== 0" :cx="padding.left" :cy="calcY(k, 0.5)" r=".5" />
 				</g>
 
 				<g v-for="(label, x) in data.labels.x" :key="x + '-1'" id="labels-x">
@@ -135,7 +135,7 @@ export default {
 		},
 
 		calcX(index) {
-			return ((parseInt(this.size.w) - this.padding.left) * index) / (this.data.labels.x.length - 1) + this.padding.left
+			return ((parseInt(this.size.w) - this.padding.left) * index) / (this.data.labels.x.length - 1)
 		},
 
 		getColor(position) {
