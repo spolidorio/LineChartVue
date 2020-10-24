@@ -1,36 +1,30 @@
 <template>
 	<div class="LineChart">
-		<svg
-			class="LineChart__Svg LineChart__Svg--debug"
-			:viewBox="`${size.x} ${size.y} ${size.w} ${size.h}`"
-			xmlns="http://www.w3.org/2000/svg"
-		>
-			<g>
-				<g v-for="(label, k) in data.labels.y" :key="k" id="labels-y">
+		<svg class="LineChart__Svg LineChart__Svg--debug" :viewBox="viewBox" xmlns="http://www.w3.org/2000/svg">
+			<!-- <g>
+				<g v-for="(label, k) in reverseYLabels" :key="k">
 					<text class="LineChart__Label" :x="padding.x" :y="calcY(k, 2)">
 						{{ label }}
 					</text>
-					<line class="LineChart__Guide" :x1="padding.left" :y1="calcY(k, 0.5)" x2="100" :y2="calcY(k, 0)" />
+					<line class="LineChart__Guide" :x1="padding.left" :y1="calcY(k, 0.5)" :x2="size.w" :y2="calcY(k, 0)" />
 					<circle v-if="label !== 0" :cx="padding.left" :cy="calcY(k, 0.5)" r=".5" />
 				</g>
 
-				<g v-for="(label, x) in data.labels.x" :key="x + '-1'" id="labels-x">
-					<text class="LineChart__Label" :x="calcX(x)" y="100">
-						{{ label }}
-					</text>
-				</g>
-			</g>
+				<text v-for="(label, x) in data.labels.x" :key="`${x}-label`" class="LineChart__Label" :x="calcX(x)" :y="size.w">
+					{{ label }}
+				</text>
+			</g> -->
 
 			<polyline class="LineChart__Axis" :points="xAxisLine" />
-			<polyline class="LineChart__Axis" :points="yAxisLine" />
+			<!-- <polyline class="LineChart__Axis" :points="yAxisLine" /> -->
 
-			<polyline
+			<!-- <polyline
 				v-for="(line, i) in data.data"
 				class="LineChart__Content"
 				:key="i"
 				:points="creatLines(line)"
 				:style="getColor(i)"
-			/>
+			/> -->
 		</svg>
 	</div>
 </template>
@@ -38,94 +32,69 @@
 <script>
 export default {
 	name: 'LineChart',
+	props: {
+		all: {
+			type: Array,
+			required: true,
+		},
+	},
+
 	data() {
 		return {
 			points: [],
-			range: null,
 			padding: {
 				top: 0,
 				right: 0,
 				bottom: 3.3,
 				left: 5,
 			},
-			xAxisLine: '',
-			yAxisLine: '',
 			size: {
 				x: 0,
 				y: 0,
 				w: 100,
 				h: 100,
 			},
-			num: 0,
-			data: this.start,
+			data: this.all[0],
 		}
 	},
 
-	props: {
-		all: {
-			type: Array,
-			required: true,
+	computed: {
+		reverseYLabels() {
+			return this.data.labels.y.slice().reverse()
 		},
-		start: {
-			type: Object,
-			required: true,
+
+		xAxisLine() {
+			const { left, bottom, top, rigth } = this.padding
+			const { h, w } = this.size
+			const y = h - bottom
+
+			return `${left},${y} ${w},${y}`
 		},
-	},
 
-	watch: {
-		data() {
-			this.data.labels.y = this.data.labels.y.reverse()
-			this.range = this.data.range
+		yAxisLine() {
+			const { left, bottom, top, rigth } = this.padding
+			const { h, w } = this.size
+			const y = h - bottom
+
+			return `${left},0 ${left},${y}`
 		},
-	},
 
-	mounted: function() {
-		this.data.labels.y = this.data.labels.y.reverse()
-		this.range = this.data.range
-		const y = parseInt(this.size.h) - this.padding.bottom
-
-		this.xAxisLine = `${this.padding.left}, 0 ${this.padding.left}, ${y} ${this.padding.left}, 0`
-		this.yAxisLine = `${this.padding.left}, ${y} ${this.padding.left}, ${y} 100, ${y}`
+		viewBox() {
+			const { h, w, x, y } = this.size
+			return `${x} ${y} ${w} ${h}`
+		},
 	},
 
 	methods: {
 		creatLines(rawData) {
-			if (!this.range) return
+			if (!this.data.range) return
 
 			const { nome, dataPoints } = rawData
-			const { x, y } = this.range
+			const { x, y } = this.data.range
 			const range = {
 				max: y.min,
 				min: y.max,
 			}
-
-			//initial point
-
-			// lines.push(
-			// 	this.dataToPoint(
-			// 		rawData.nome,
-			// 		[rawData.dataPoints[0][0], this.range.y.min],
-			// 		{
-			// 			y: { max: this.range.y.min, min: this.range.y.max },
-			// 			x: this.range.x,
-			// 		},
-			// 		this.padding
-			// 	)
-			// )
-
-			//final point
-
-			// lines.push(
-			// 	this.dataToPoint(
-			// 		rawData.nome,
-			// 		[rawData.dataPoints[rawData.dataPoints.length - 1][0], this.range.y.min],
-			// 		{
-			// 			y: { max: this.range.y.min, min: this.range.y.max },
-			// 			x: this.range.x,
-			// 		},
-			// 		this.padding
-			// 	)
-			// )
 
 			return dataPoints.map((points) => this.dataToPoint(nome, points, { y: range, x }, this.padding))
 		},
@@ -171,9 +140,7 @@ export default {
 		overflow: visible;
 		width: 600px;
 		&--debug{
-			background-color: red;
-			position: relative;
-			top: 60px;
+			background-color: aqua;
 		}
 	}
 
