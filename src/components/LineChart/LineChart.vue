@@ -1,14 +1,10 @@
 <template>
 	<div class="LineChart">
-		<svg
-			class="LineChart__Svg LineChart__Svg--debug"
-			:viewBox="viewBox"
-			xmlns="http://www.w3.org/2000/svg"
-		>
+		<svg class="LineChart__Svg" :viewBox="viewBox" xmlns="http://www.w3.org/2000/svg">
 			<g>
 				<text
 					v-for="(label, index) in reverseYLabels"
-					:key="index"
+					:key="`${index}-label-y`"
 					:style="fontStyle"
 					:x="getLabelYPositionX(label)"
 					:y="getLabelYPositionY(index)"
@@ -17,18 +13,24 @@
 				</text>
 
 				<text
-					v-for="(label, x) in data.labels.x"
-					:key="`${x}-label`"
+					v-for="(label, index) in data.labels.x"
+					:key="`${index}-label-x`"
 					:style="fontStyle"
-					:x="calcX(x)"
-					:y="size.w"
+					:x="getLabelXPositionX(index)"
+					:y="getLabelXPositionY()"
 				>
 					{{ label }}
 				</text>
 			</g>
 
-			<!-- <line class="LineChart__Guide" :x1="padding.left" :y1="calcY(k, 0.5)" :x2="size.w" :y2="calcY(k, 0)" />
-			<circle v-if="label !== 0" :cx="padding.left" :cy="calcY(k, 0.5)" r=".5" /> -->
+			<!-- <line
+				class="LineChart__Guide"
+				:x1="padding.left"
+				:y1="calcY(k, 0.5)"
+				:x2="size.w"
+				:y2="calcY(k, 0)"
+			/> -->
+			<!-- <circle v-if="label !== 0" :cx="padding.left" :cy="calcY(k, 0.5)" r=".5" /> -->
 
 			<polyline class="LineChart__Axis" :points="xAxisLine" />
 			<polyline class="LineChart__Axis" :points="yAxisLine" />
@@ -62,10 +64,8 @@ export default {
 		return {
 			points: [],
 			padding: {
-				top: 3,
-				right: 3,
-				bottom: 3,
-				left: 3,
+				vertical: 3,
+				horizontal: 3,
 			},
 			size: {
 				x: 0,
@@ -83,19 +83,19 @@ export default {
 		},
 
 		marginLeft() {
-			return this.padding.left
+			return this.padding.horizontal
 		},
 
 		marginTop() {
-			return this.padding.top
+			return this.padding.vertical
 		},
 
 		marginRight() {
-			return this.size.w - this.padding.right
+			return this.size.w - this.padding.horizontal
 		},
 
 		marginBottom() {
-			return this.size.h - this.padding.bottom
+			return this.size.h - this.padding.vertical
 		},
 
 		xAxisLine() {
@@ -133,23 +133,31 @@ export default {
 		},
 
 		getLabelYPositionY(index) {
-			const { bottom } = this.padding
+			const { vertical } = this.padding
 			const { labels } = this.data
 			const total = labels.y.length > 1 ? labels.y.length - 1 : labels.y.length
 			const spacing = this.marginTop + this.fontSize / 2
 
-			return ((this.marginBottom - bottom) * index) / total + spacing
+			return ((this.marginBottom - vertical) * index) / total + spacing
 		},
 
 		getLabelYPositionX(label) {
-			const letters = String(label).length - 1
-			return letters
-				? Math.floor(this.marginLeft - this.fontSize) - letters * 0.5
-				: Math.floor(this.marginLeft - this.fontSize)
+			const chars = String(label).length - 1
+			const size = Math.floor(this.marginLeft - this.fontSize)
+			return chars ? size - chars * 0.5 : size
 		},
 
-		calcX(index) {
-			return ((this.size.w - this.padding.left) * index) / (this.data.labels.x.length - 1)
+		getLabelXPositionX(index) {
+			const { horizontal } = this.padding
+			const { labels } = this.data
+			const total = labels.x.length > 1 ? labels.x.length - 1 : labels.x.length
+			const spacing = this.marginLeft - this.fontSize / 2
+
+			return ((this.marginRight - horizontal) * index) / total + spacing
+		},
+
+		getLabelXPositionY() {
+			return this.marginBottom + this.fontSize + 1
 		},
 
 		getColor(position) {
@@ -160,15 +168,15 @@ export default {
 		},
 
 		dataToPoint(name, point, range, padding) {
-			const { top, left, bottom, right } = padding
+			const { horizontal, vertical } = padding
 			const { w, h } = this.size
 			const { x, y } = range
 
-			const sizeW = parseInt(w) - (right + left)
-			const sizeH = parseInt(h) - (top + bottom)
+			const sizeW = w - horizontal * 2
+			const sizeH = h - vertical * 2
 
-			const xAxis = (sizeW / (x.max - x.min)) * (point[0] - x.min) + left
-			const yAxis = (sizeH / (y.max - y.min)) * (point[1] - y.min) + top
+			const xAxis = (sizeW / (x.max - x.min)) * (point[0] - x.min) + horizontal
+			const yAxis = (sizeH / (y.max - y.min)) * (point[1] - y.min) + vertical
 
 			return [xAxis, yAxis]
 		},
