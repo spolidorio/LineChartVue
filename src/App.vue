@@ -2,7 +2,7 @@
 	<div id="app">
 		<template>
 			<section class="nav-container">
-				<LineChart :all="data" :start="data[0]" />
+				<LineChart :all="data" />
 			</section>
 		</template>
 	</div>
@@ -34,9 +34,5 @@ export default {
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;
   text-align: center;
-}
-
-.nav-container {
-  height: calc(100vh - 110px);
 }
 </style>
