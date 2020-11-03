@@ -23,14 +23,15 @@
 				</text>
 			</g>
 
-			<!-- <line
-				class="LineChart__Guide"
-				:x1="padding.left"
-				:y1="calcY(k, 0.5)"
-				:x2="size.w"
-				:y2="calcY(k, 0)"
-			/> -->
-			<!-- <circle v-if="label !== 0" :cx="padding.left" :cy="calcY(k, 0.5)" r=".5" /> -->
+			<g v-if="guides">
+				<polyline
+					v-for="(label, index) in reverseYLabels"
+					:key="`${index}-guide`"
+					class="LineChart__Guide"
+					:points="getGuidePosition(index)"
+				/>
+				<!-- <circle :cx="padding.left" :cy="calcY(k, 0.5)" r=".5" /> -->
+			</g>
 
 			<polyline class="LineChart__Axis" :points="xAxisLine" />
 			<polyline class="LineChart__Axis" :points="yAxisLine" />
@@ -57,6 +58,10 @@ export default {
 		fontSize: {
 			type: Number,
 			default: 1.5,
+		},
+		guides: {
+			type: Boolean,
+			default: false,
 		},
 	},
 
@@ -114,6 +119,16 @@ export default {
 		fontStyle() {
 			return { fontSize: `${this.fontSize}px` }
 		},
+
+		yAxisTotal() {
+			const { labels } = this.data
+			return labels.y.length > 1 ? labels.y.length - 1 : labels.y.length
+		},
+
+		xAxisTotal() {
+			const { labels } = this.data
+			return labels.x.length > 1 ? labels.x.length - 1 : labels.x.length
+		},
 	},
 
 	methods: {
@@ -134,11 +149,9 @@ export default {
 
 		getLabelYPositionY(index) {
 			const { vertical } = this.padding
-			const { labels } = this.data
-			const total = labels.y.length > 1 ? labels.y.length - 1 : labels.y.length
 			const spacing = this.marginTop + this.fontSize / 2
 
-			return ((this.marginBottom - vertical) * index) / total + spacing
+			return ((this.marginBottom - vertical) * index) / this.yAxisTotal + spacing
 		},
 
 		getLabelYPositionX(label) {
@@ -149,15 +162,20 @@ export default {
 
 		getLabelXPositionX(index) {
 			const { horizontal } = this.padding
-			const { labels } = this.data
-			const total = labels.x.length > 1 ? labels.x.length - 1 : labels.x.length
 			const spacing = this.marginLeft - this.fontSize / 2
 
-			return ((this.marginRight - horizontal) * index) / total + spacing
+			return ((this.marginRight - horizontal) * index) / this.xAxisTotal + spacing
 		},
 
 		getLabelXPositionY() {
 			return this.marginBottom + this.fontSize + 1
+		},
+
+		getGuidePosition(index) {
+			const { vertical } = this.padding
+			const position = ((this.marginBottom - vertical) * index) / this.yAxisTotal
+
+			return `${vertical},${position + vertical} ${this.marginRight},${position + vertical}`
 		},
 
 		getColor(position) {
@@ -208,12 +226,8 @@ export default {
 		stroke-width: 0.3
 	}
 
-	// &__Label{
-	// 	font-size 2px
-	// }
-
 	&__Guide{
-		stroke: #dedede;
+		stroke: #ccc;
 		stroke-width: 0.2
 	}
 }

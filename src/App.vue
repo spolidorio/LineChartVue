@@ -2,7 +2,7 @@
 	<div id="app">
 		<template>
 			<section class="nav-container">
-				<LineChart :all="data" />
+				<LineChart :all="data" guides />
 			</section>
 		</template>
 	</div>
