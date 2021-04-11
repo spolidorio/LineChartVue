@@ -1,6 +1,16 @@
-# Line Chart with VUE.js
+# Simple Line Chart
 
-Project that imports data from json and show charts using SVG
+## About
+
+It's a simple web application where get a outside data and transforms in a simple line chart.
+
+## Technologys
+
+- HTML
+- Stylus
+- ES6
+- Vue.js
+- SVG
 
 ## Project setup
 ```
@@ -17,15 +27,8 @@ npm run dev
 npm run build
 ```
 
-### Run your tests
-```
-npm run test
-```
+### Task lists
 
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+- [ ] Update to Vue 3
+- [ ] Change the project to typescript
+- [ ] Update the chart.json to a better json structure

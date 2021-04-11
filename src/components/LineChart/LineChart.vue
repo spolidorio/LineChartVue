@@ -30,7 +30,6 @@
 					class="LineChart__Guide"
 					:points="getGuidePosition(index)"
 				/>
-				<!-- <circle :cx="padding.left" :cy="calcY(k, 0.5)" r=".5" /> -->
 			</g>
 
 			<polyline class="LineChart__Axis" :points="xAxisLine" />
@@ -70,7 +69,7 @@ export default {
 			points: [],
 			padding: {
 				vertical: 3,
-				horizontal: 3,
+				horizontal: 10,
 			},
 			size: {
 				x: 0,
@@ -172,10 +171,10 @@ export default {
 		},
 
 		getGuidePosition(index) {
-			const { vertical } = this.padding
+			const { vertical, horizontal } = this.padding
 			const position = ((this.marginBottom - vertical) * index) / this.yAxisTotal
 
-			return `${vertical},${position + vertical} ${this.marginRight},${position + vertical}`
+			return `${horizontal},${position + vertical} ${this.marginRight},${position + vertical}`
 		},
 
 		getColor(position) {
